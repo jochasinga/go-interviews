@@ -12,13 +12,13 @@ Chapters
 + [Theories and Algorithms](#theories-and-algorithms)
     + [Time and Space Complexity](#time-and-space-complexity)
     + [Big O Notation](#big-o-notation)
-        + [O(1)](#o1)
-        + [O(n)](#on)
-        + [O(n<sup>2</sup>)](#on2)
+        + [O(1)](#o(1))
+        + [O(n)](#o(n))
+        + [O(n<sup>2</sup>)](#o(n<sup>2</sup>))
         + [N could be the *actual* input, or the *size* of the input](#n-could-be-the-actual-input-or-the-size-of-the-input)
         + [Drop the constants](#drop-the-constants)
         + [Drop the less significant terms](#drop-the-less-significant-terms)
-        + [It's about the "worse case"](#its-about-the-worse-case)
+        + [It's about the "worse case"](#its-about-the-worst-case)
 
 The Art of Cramming
 -------------------
@@ -180,3 +180,28 @@ func printHello(words []string) {
 ```
 
 This function could have taken O(1) time if a string containing "hello" is actually the first (or tenth, for what it's worth. See [Drop the constants](#drop-the-constants)) member in the slice. **Worst case is, the culprit is the last member, making this case an O(n)**.
+
+#### Space complexity
+Apart from time, some time we want to optimize for using less memory instead of (or in addition to) using less time. This is very similar to talking about time complexity. We simply look at the total size (relative to the size of the input) of any new variables we're allocating.
+
+This function takes O(1) space (no new variable allocated)
+
+```go
+func sayHiNTimes(n int) {
+        for time := range n {
+            fmt.Println("hi")
+        }
+}
+```
+
+This function takes O(n) space (the size of `hi_list` scales with the size of the input):
+
+```go
+func listOfHiNTimes(n int) []string {
+        hiList := []string
+        for time := range n {
+                hiList = append(hiList, "hi")
+        }
+        return hiList
+}
+```
