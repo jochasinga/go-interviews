@@ -12,13 +12,13 @@ Chapters
 + [Theories and Algorithms](#theories-and-algorithms)
     + [Time and Space Complexity](#time-and-space-complexity)
     + [Big O Notation](#big-o-notation)
-        + [O(1)](#o(1))
-        + [O(n)](#o(n))
-        + [O(n<sup>2</sup>)](#o(n<sup>2</sup>))
+        + [O(1)](#o1)
+        + [O(n)](#on)
+        + [O(n<sup>2</sup>)](#on2)
         + [N could be the *actual* input, or the *size* of the input](#n-could-be-the-actual-input-or-the-size-of-the-input)
         + [Drop the constants](#drop-the-constants)
         + [Drop the less significant terms](#drop-the-less-significant-terms)
-        + [It's about the "worse case"](#its-about-the-worst-case)
+        + [It's about the "worse case"](#its-about-the-worse-case)
 
 The Art of Cramming
 -------------------
