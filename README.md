@@ -18,6 +18,7 @@ Chapters
         + [Drop the less significant terms](#drop-the-less-significant-terms)
         + [It's about the "worse case"](#its-about-the-worst-case)
     + [Logarithms](#logarithms)
++ [Data structures](#data-structures)
 
 The Art of Cramming
 -------------------
@@ -319,3 +320,61 @@ There it is. The total time cost of binary search is O(log<sub>2</sub>*n*).
 Binary search always results in O(log *n*) time.
 
 See [Logs in binary search](#logs-in-binary-search)
+
+Data structures
+---------------
+Some data structures we should know of.
+
+### Linked Lists
+A linked list node contains a value or data and a pointer (or pointers) to the next node(s).
+![singly linked list](http://www.cs.usfca.edu/~srollins/courses/cs112-f08/web/notes/linkedlists/ll2.gif)
+##### Singly linked list
+Often, our only connection to the list itself is a variable pointing to the head. From there we can walk down the list to all the other nodes.
+
+```go
+type LinkedListNode struct {
+	    Value int
+	    Next  *LinkedListNode
+}
+```
+
+How you create a linked list:
+
+```go
+a := &LinkedListNode{Value:5}
+b := &LinkedListNode{Value:9}
+c := &LinkedListNode{Value:1}
+a.Next = b
+b.Next = c
+```
+**Advantages**
+1. Linked lists have **constant-time O(1) insertions and deletions in any position** (you just change some pointers). Arrays require O(*n*) time to do the same thing, because you'd have to "shift" all the subsequent items over 1 index.
+2. Linked lists **can continue to expand as long as there is space on the machine**. Arrays (in low-level languages) must have their size specified ahead of time. Even in languages with "dynamic arrays" that automatically resize themselves when they run out of space (like Python, Ruby and JavaScript), the operation to resize a dynamic array has a large cost which can make a single insertion unexpectedly expensive.
+
+**Disadvantages**
+1. To access or edit an item in a linked list, you have to take O(*i*) time to walk from the head of the list to the *i*th item (unless of course you already have a pointer directly to that item). Arrays have constant-time lookups and edits to the *i*th item.
+
+##### Doubly linked list
+![Doubly linked list](http://www.cs.usfca.edu/~srollins/courses/cs112-f08/web/notes/linkedlists/ll5.gif)
+
+```go
+type LinkedListNode struct {
+        Value    int
+        Next     *LinkedListNode
+        Previous *LinkedListNode
+}
+```
+And how to create one
+
+```go
+a := &LinkedListNode{Value: 5}
+b := &LinkedListNode{Value: 1}
+c := &LinkedListNode{Value: 9}
+
+a.Next = b
+b.Previous = a
+b.Next = c
+c.Previous = b
+```
+
+Doubly linked lists allow us to traverse our list backwards. In a singly linked list, if you just had a pointer to a node in the middle of a list, there would be no way to know what its previous node was. Not a problem in a doubly linked list.
