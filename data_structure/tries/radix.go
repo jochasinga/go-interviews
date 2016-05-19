@@ -2,8 +2,8 @@
 //
 // Example from http://stackoverflow.com/questions/14708134/what-is-the-difference-between-trie-and-radix-trie-data-structures
 //
-//              *
-//	       /
+//               *
+//	        /
 //         (ello)
 //           /
 //  * - h - * -(a) - * - (t) - *
@@ -16,18 +16,32 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 )
 
+type Tree struct {
+	
+}
+
+func NewTree(words ...string) (*Tree, error) {
+	firstLetter := words[0][0]
+	for _, word := range words {
+		if word[0] != firstLetter {
+			return nil, errors.New("Words do not share the same first letter.")
+		}
+	}
+}
+
 type Edge struct {
-	From *Node
-	To *Node
+	From  *Node
+	To    *Node
 	Label string
 }
 
 type Node struct {
-	Name string
+	Name  string
 	Level int
 	Heads []*Edge
 }
