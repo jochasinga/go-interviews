@@ -1,4 +1,19 @@
-// TODO: Improve
+// TODO: Search should search until hits the node whose
+// Next is empty to make sure the word is completely terminated.
+//
+// Example from http://stackoverflow.com/questions/14708134/what-is-the-difference-between-trie-and-radix-trie-data-structures
+//
+//              *
+//	       /
+//         (ello)
+//           /
+//  * - h - * -(a) - * - (t) - *
+//	              \
+//                    (ve)
+//                       \
+//                        *
+//
+//
 package main
 
 import (
@@ -6,54 +21,126 @@ import (
 	"strings"
 )
 
-type Node struct {
-	Level int
-	Edge []string
-	Next []*Node
+type Edge struct {
+	From *Node
+	To *Node
+	Label string
 }
 
-func CheckWordInTree(word string, first *Node) bool {
-	prefix := ""
-	suffix := ""
-	next := &Node{}
-	wordLen := len(word)
+type Node struct {
+	Level int
+	Heads []*Edge
+}
+
+func (n *Node) IsLeaf() bool {
+	if len(n.Heads) > 0 {
+		return false
+	}
+	return true
+}
+
+func (n *Node) IsRoot() bool {
+	if n.Level > 0 {
+		return false
+	}
+	return true
+}
+
+var (
+	counter = 0
+	characters = ""
+)
+
+
+func CheckWordInTree(word string, node *Node) bool {
+
+	// FIXME: Relies on a global counter in order
+	// to persist the initial word provided in the argument.
+	init := ""
+	
+	if counter == 0 {
+		init = word
+	}
+	
+	fmt.Printf("collected: %q\n", characters)
+	fmt.Printf("%d RUN\n", counter)
+	
+	counter++
+
 	for i, _ := range word {
-		prefix = word[:i+1]
-		for _, e := range first.Edge {
-			if strings.Contains(e, prefix) {
-				suffix = word[i+1:wordLen]
-				next = first.Next[0]
-			}
-		}
-		for _, e := range next.Edge {
-			if strings.Contains(e, suffix) {
-				return true
+		prefix := word[:i+1]
+
+		for _, edge := range node.Heads {
+			if strings.Compare(edge.Label, prefix) == 0 {
+				characters += prefix
+				suffix := word[i+1:len(word)]
+				next := edge.To
+
+				// FIXME: The recursion never hits the leaf node, resulting
+				// in a forever loop if a finite match isn't found.
+				for counter > 5 {
+					_ = CheckWordInTree(suffix, next)
+					if strings.Compare(characters, init) == 0 {
+						return true
+					}
+				}
+
 			}
 		}
 	}
 	return false
 }
 
-
 func main() {
-	// "hello" route
-	root := &Node{Level: 0, Edge: []string{"h"}}
-	h := &Node{Level: 1, Edge: []string{"ello"}}
-	ello_ := &Node{Level: 2, Edge: []string{"$"}}
-	root.Next = append(root.Next, h)
-	h.Next = append(h.Next, ello_)
+	// TODO: Let's write a function to load any set of words
+	// into the tree automatically!
+	
+	// nodes
+	rootNode := &Node{}
+	hNode := &Node{}
+	elloNode := &Node{IsLeafNode: true}
+	aNode := &Node{Level:2}
+	veNode := &Node{Level:3, IsLeafNode: true}
+	tNode := &Node{Level:3, IsLeafNode: true}
+	
+	// create Edges
+	hEdge := &Edge{
+		From: rootNode,
+		To: hNode,
+		Label: "h",
+	}
+	elloEdge := &Edge{
+		From: hNode,
+		To: elloNode,
+		Label: "ello",
+	}
+	aEdge := &Edge{
+		From: hNode,
+		To: aNode,
+		Label: "a",
+	}
+	veEdge := &Edge{
+		From: aNode,
+		To: veNode,
+		Label: "ve",
+	}
+	tEdge := &Edge{
+		From: aNode,
+		To: tNode,
+		Label: "t",
+	}
+	
+	rootNode.Heads = []*Edge{hEdge}
+	hNode.Heads = []*Edge{elloEdge, aEdge}
+	aNode.Heads = []*Edge{tEdge, veEdge}
 
-	// "have" route
-	h.Edge = append(h.Edge, "a")
-	a := &Node{Level: 3, Edge: []string{"ve"}}
-	ve_ := &Node{Level: 4, Edge: []string{"$"}}
-	h.Next = append(h.Next, a)
-	a.Next = append(a.Next, ve_)
 
-	// "hat" route
-	t_ := &Node{Level: 4, Edge: []string{"$"}}
-	a.Next = append(a.Next, t_)
-	a.Edge = append(a.Edge, "t")
+//	fmt.Println(CheckWordInTree("hello", rootNode))
+//	fmt.Println(CheckWordInTree("ha", rootNode))
+//	fmt.Println(CheckWordInTree("hat", rootNode))
+	fmt.Println(CheckWordInTree("had", rootNode))
+//	fmt.Println(CheckWordInTree("have", rootNode))
 
-	fmt.Println(CheckWordInTree("hello", root))
+	// Edge cases
+//	fmt.Println(CheckWordInTree("hate", rootNode))
 }
