@@ -1,5 +1,4 @@
-// TODO: Search should search until hits the node whose
-// Next is empty to make sure the word is completely terminated.
+// TODO: Write functions to automatically load a set of words into the tree
 //
 // Example from http://stackoverflow.com/questions/14708134/what-is-the-difference-between-trie-and-radix-trie-data-structures
 //
@@ -28,6 +27,7 @@ type Edge struct {
 }
 
 type Node struct {
+	Name string
 	Level int
 	Heads []*Edge
 }
@@ -50,7 +50,6 @@ var (
 	counter = 0
 	characters = ""
 )
-
 
 func CheckWordInTree(word string, node *Node) bool {
 
@@ -76,15 +75,18 @@ func CheckWordInTree(word string, node *Node) bool {
 				suffix := word[i+1:len(word)]
 				next := edge.To
 
-				// FIXME: The recursion never hits the leaf node, resulting
-				// in a forever loop if a finite match isn't found.
-				for counter > 5 {
-					_ = CheckWordInTree(suffix, next)
-					if strings.Compare(characters, init) == 0 {
-						return true
+				for {
+					fmt.Printf("node %q is leaf: %t\n", next.Name, next.IsLeaf())
+					if !next.IsLeaf() {
+						_ = CheckWordInTree(suffix, next)
+					} else {
+						break
 					}
+					break
 				}
-
+				if strings.Compare(characters, init) == 0 {
+					return true
+				}
 			}
 		}
 	}
@@ -92,16 +94,14 @@ func CheckWordInTree(word string, node *Node) bool {
 }
 
 func main() {
-	// TODO: Let's write a function to load any set of words
-	// into the tree automatically!
-	
+	// Manually, laborously creating each node
 	// nodes
-	rootNode := &Node{}
-	hNode := &Node{}
-	elloNode := &Node{IsLeafNode: true}
-	aNode := &Node{Level:2}
-	veNode := &Node{Level:3, IsLeafNode: true}
-	tNode := &Node{Level:3, IsLeafNode: true}
+	rootNode := &Node{Name: "root"}
+	hNode := &Node{Name: "h"}
+	elloNode := &Node{Name: "ello"}
+	aNode := &Node{Level:2, Name: "a"}
+	veNode := &Node{Level:3, Name: "ve"}
+	tNode := &Node{Level:3, Name: "t"}
 	
 	// create Edges
 	hEdge := &Edge{
@@ -138,9 +138,10 @@ func main() {
 //	fmt.Println(CheckWordInTree("hello", rootNode))
 //	fmt.Println(CheckWordInTree("ha", rootNode))
 //	fmt.Println(CheckWordInTree("hat", rootNode))
-	fmt.Println(CheckWordInTree("had", rootNode))
+//	fmt.Println(CheckWordInTree("had", rootNode))
 //	fmt.Println(CheckWordInTree("have", rootNode))
+//	fmt.Println(CheckWordInTree("haven", rootNode))
 
 	// Edge cases
-//	fmt.Println(CheckWordInTree("hate", rootNode))
+	fmt.Println(CheckWordInTree("hatredenemy", rootNode))
 }
