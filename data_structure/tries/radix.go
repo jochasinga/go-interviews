@@ -21,6 +21,7 @@ import (
 	"strings"
 )
 
+/*
 type Tree struct {
 	
 }
@@ -33,6 +34,7 @@ func NewTree(words ...string) (*Tree, error) {
 		}
 	}
 }
+*/
 
 type Edge struct {
 	From  *Node
